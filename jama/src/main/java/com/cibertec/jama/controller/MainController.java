@@ -10,5 +10,9 @@ public class MainController {
     public String index() {
         return "login/login";
     }
+    @GetMapping("/menu/main-menu")
+    public String mainMenu() {
+        return "main-menu";
+    }
 
 }
