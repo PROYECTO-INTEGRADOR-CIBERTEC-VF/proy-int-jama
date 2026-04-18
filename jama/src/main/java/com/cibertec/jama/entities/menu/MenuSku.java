@@ -14,6 +14,7 @@ import lombok.ToString;
 public class MenuSku {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
 
     private String nombre;
