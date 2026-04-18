@@ -16,7 +16,9 @@ import lombok.ToString;
 @Entity
 public class MenuType {
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
     private String nombre;
     private String descripcion;
