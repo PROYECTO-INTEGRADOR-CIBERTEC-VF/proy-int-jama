@@ -20,8 +20,10 @@ public class MenuSku {
     private String nombre;
     private String descripcion;
     private boolean estaBloqueado;
-    private String tipoId;
     private double precio;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuType menuType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuCategory menuCategory;

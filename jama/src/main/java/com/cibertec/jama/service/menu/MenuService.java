@@ -1,11 +1,12 @@
 package com.cibertec.jama.service.menu;
 
+import com.cibertec.jama.dto.menu.MenuSkuAndImageDto;
+import com.cibertec.jama.dto.menu.MenuSkuJoinsDto;
 import com.cibertec.jama.entities.menu.MenuCategory;
+import com.cibertec.jama.entities.menu.MenuImage;
+import com.cibertec.jama.entities.menu.MenuSku;
 import com.cibertec.jama.entities.menu.MenuType;
-import com.cibertec.jama.repositories.menu.MenuCategoryRepository;
-import com.cibertec.jama.repositories.menu.MenuRepository;
-import com.cibertec.jama.repositories.menu.MenuSkuRepository;
-import com.cibertec.jama.repositories.menu.MenuTypeRepository;
+import com.cibertec.jama.repositories.menu.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class MenuService {
     private final MenuTypeRepository menuTypeRepository;
     private final MenuCategoryRepository menuCategoryRepository;
     private final MenuSkuRepository menuSkuRepository;
+    private final MenuImageRepository menuImageRepository;
 
 
     public List<MenuType> getAllTypes() {
@@ -110,6 +112,7 @@ public class MenuService {
     public MenuCategory getCategoriesById(int id) {
         return menuCategoryRepository.findById(id).orElse(null);
     }
+
     public void initCategories() {
         var categories = menuCategoryRepository.findAll();
         if (!categories.isEmpty()) {
@@ -145,5 +148,105 @@ public class MenuService {
         list.add(bebidas);
         list.add(saltados);
         menuCategoryRepository.saveAll(list);
+    }
+
+    /*SKUS*/
+
+    public List<MenuSku> getAllSkus() {
+        return menuSkuRepository.findAll();
+
+    }
+
+    public List<MenuSkuJoinsDto> getAllSkusAsJoins() {
+        var skus = menuSkuRepository.findAll();
+        var dtos = new ArrayList<MenuSkuJoinsDto>();
+
+
+        for (var sku : skus) {
+
+
+            var newDto = new MenuSkuJoinsDto();
+            newDto.setId(sku.getId());
+            newDto.setNombre(sku.getNombre());
+            newDto.setDescripcion(sku.getDescripcion());
+            newDto.setEstaBloqueado(sku.isEstaBloqueado());
+            newDto.setPrecio(sku.getPrecio());
+
+
+            if (sku.getMenuType() != null) {
+                newDto.setTypeName(sku.getMenuType().getNombre());
+            } else {
+                newDto.setTypeName("No type");
+            }
+
+            if (sku.getMenuCategory() != null) {
+                newDto.setCategoryName(sku.getMenuCategory().getName());
+            } else {
+                newDto.setCategoryName("No category");
+            }
+
+            if (sku.getMenuImage() != null) {
+                newDto.setImageUrl(sku.getMenuImage().getUrl());
+                newDto.setImageAlias(sku.getMenuImage().getAlias());
+            } else {
+                newDto.setImageUrl("");
+                newDto.setImageAlias("No image");
+            }
+
+            dtos.add(newDto);
+
+        }
+
+
+        return dtos;
+    }
+
+    public void saveImage(MenuImage menuImage) {
+        menuImageRepository.save(menuImage);
+
+    }
+
+    public void saveSku(MenuSku menuSku, MenuImage menuImage) {
+
+        menuSku.setMenuImage(menuImage);
+        if (menuImage.getAlias().isBlank()){
+            menuImage.setAlias(menuSku.getNombre());
+        }
+        menuSkuRepository.save(menuSku);
+
+    }
+
+    public MenuSku findSkuById(int id) {
+        return menuSkuRepository.findById(id).orElse(null);
+    }
+
+    public void updateSku(int id, MenuSkuAndImageDto dto) {
+        var formSku = dto.menuSku();
+        var formImage = dto.menuImage();
+
+        var sku = menuSkuRepository.findById(id).orElse(null);
+
+        assert sku != null : "sku not found";
+        var image = menuImageRepository.findById(sku.getMenuImage().getId()).orElse(null);
+
+
+        assert image != null : "image not found";
+        image.setAlias(formImage.getAlias());
+        image.setUrl(formImage.getUrl());
+
+        sku.setNombre(formSku.getNombre());
+        sku.setDescripcion(formSku.getDescripcion());
+        sku.setEstaBloqueado(formSku.isEstaBloqueado());
+        sku.setPrecio(formSku.getPrecio());
+        sku.setMenuImage(image);
+
+        menuImageRepository.save(image);
+        menuSkuRepository.save(sku);
+
+
+    }
+
+    public void deleteSku(int id) {
+        menuSkuRepository.deleteById(id);
     }
 }
