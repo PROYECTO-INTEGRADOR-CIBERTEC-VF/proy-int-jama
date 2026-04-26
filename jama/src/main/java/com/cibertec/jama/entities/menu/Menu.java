@@ -1,6 +1,7 @@
 package com.cibertec.jama.entities.menu;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,13 @@ public class Menu {
     private double precioTotal;
     private double descuento;
 
-    @OneToMany(mappedBy = "menu",cascade = CascadeType.ALL )
+    @ToString.Exclude
+
+    @ManyToMany
+    @JoinTable(
+            name = "menu_recipe",
+            joinColumns = @JoinColumn(name = "menu_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_sku_id")
+    )
     private List<MenuSku> menuSkus;
 }

@@ -47,51 +47,83 @@
                     <div class="panel">
                         <h3 class="section-title">Menu Form</h3>
 
-                        <form action="#" method="post">
-                            <input type="hidden" name="id">
+                        <form th:object="${menuList}" th:action="@{/menu/menu-registro-menu}" method="post">
+                            <input type="hidden" name="id" th:field="*{id}">
 
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Menu name"
-                                       required>
+                                <input type="text" id="nombre" name="nombre" class="form-control"
+                                       placeholder="Menu name"
+                                       th:field="*{nombre}" required>
                             </div>
 
                             <div class="mb-3 form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado">
+                                <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado"
+                                       th:field="*{estaBloqueado}">
                                 <label class="form-check-label" for="estaBloqueado">Está bloqueado</label>
                             </div>
 
                             <div class="mb-3">
                                 <label for="precioTotal" class="form-label">Precio Total</label>
-                                <input type="number" step="0.01" id="precioTotal" name="precioTotal" class="form-control"
-                                       placeholder="0.00">
+                                <input type="number" step="0.01" id="precioTotal" name="precioTotal"
+                                       class="form-control"
+                                       th:field="*{precioTotal}" placeholder="0.00"
+                                       readonly
+                                >
                             </div>
 
                             <div class="mb-3">
                                 <label for="descuento" class="form-label">Descuento</label>
                                 <input type="number" step="0.01" id="descuento" name="descuento" class="form-control"
-                                       placeholder="0.00">
+                                       th:field="*{descuento}" placeholder="0.00"
+                                       onchange="addDisscountOnChange()"
+                                >
                             </div>
 
                             <hr class="my-4">
 
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                 <h4 class="section-title mb-0">Menu SKUs</h4>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="addSkuRow()">
-                                    + Add MenuSku
-                                </button>
+
+                                <div class="d-flex align-items-center gap-2 ms-auto">
+                                    <select id="skuSelect"
+                                            class="form-select form-select-sm w-auto rounded-3 shadow-sm"
+                                            style="min-width: 220px;">
+                                        <option
+                                                th:each="sku : ${menuSkus}"
+                                                th:value="${sku.id}"
+                                                th:text="${sku.nombre}"
+                                                th:attr="
+                                                data-nombre=${sku.precio}
+                                                "
+                                        ></option>
+
+                                    </select>
+
+                                    <button type="button"
+                                            class="btn btn-primary btn-sm rounded-3 px-3"
+                                            onclick="addSku()"
+                                    >
+                                        + Add MenuSku
+                                    </button>
+
+                                </div>
+                            </div>
+                            <!--hidden inputs that sping will read-->
+                            <div id="hiddenInputs" hidden>
+
                             </div>
 
                             <!--card skus-->
                             <div class="card shadow-sm border-0 rounded-4 mt-3">
                                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                                     <h5 class="mb-0 fw-semibold">Selected Menu SKUs</h5>
-                                    <span class="badge bg-primary">2 items</span>
+                                    <span id="menuSkuCounter" class="badge bg-primary">0</span>
                                 </div>
 
                                 <div class="card-body p-0">
                                     <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0">
+                                        <table class="table table-hover align-middle mb-0" id="skuTableBody">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th class="ps-4">ID</th>
@@ -100,28 +132,7 @@
                                                     <th class="text-end pe-4">Acciones</th>
                                                 </tr>
                                             </thead>
-
                                             <tbody>
-                                                <tr>
-                                                    <td class="ps-4 fw-semibold text-primary">#1</td>
-                                                    <td>Classic Burger</td>
-                                                    <td>$14.00</td>
-                                                    <td class="text-end pe-4">
-                                                        <button class="btn btn-sm btn-outline-danger">
-                                                            Remove
-                                                        </button>
-                                                    </td>
-                                                </tr>
-
-
-
-                                                <!-- empty state -->
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted py-4">
-                                                        No SKUs selected
-                                                    </td>
-                                                </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -163,28 +174,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Combo Burger</td>
-                                        <td><span class="badge bg-success">No</span></td>
-                                        <td>45.00</td>
-                                        <td>5.00</td>
-                                        <td>3</td>
+                                    <tr th:each="menu : ${menusTableList}">
+                                        <td  th:text="${menu.id}">1</td>
+                                        <td th:text="${menu.nombre}"></td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                            <span th:text="${menu.estaBloqueado}" class="badge bg-success"></span>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Pizza Promo</td>
-                                        <td><span class="badge bg-danger">Yes</span></td>
-                                        <td>60.00</td>
-                                        <td>10.00</td>
-                                        <td>2</td>
+                                        <td th:text="${menu.precioTotal}"></td>
+                                        <td th:text="${menu.descuento}"></td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning">Edit</button>
-                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                            <p th:each="m : ${menu.menuSkus}"
+                                               th:text="${m.nombre}"></p>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/menu/menu-registro-menu/{id}(id= ${menu.id})}"
+                                                    class="btn btn-sm btn-warning">Edit</a>
+                                            <a th:href="@{/menu/menu-registro-menu/delete/{id}(id= ${menu.id})}"
+                                                    class="btn btn-sm btn-danger">Delete</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -202,4 +208,91 @@
 
 
     </body>
+    <script>
+        let index = 0
+        let count = 0
+        let currentPrice = 0
+
+        function addSku() {
+
+            const totalPriceInput = document.getElementById("precioTotal")
+
+            const select = document.getElementById("skuSelect");
+            const selectedOption = select.options[select.selectedIndex];
+
+            const id = select.value
+            const name = selectedOption.text
+            const price = selectedOption.getAttribute("data-nombre")
+
+            let counter = document.getElementById("menuSkuCounter")
+
+            if (!id) return;
+
+            const table = document.getElementById("skuTableBody");
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td class="ps-4 fw-semibold text-primary">#${id}</td>
+        <td>${name}</td>
+        <td>${price}</td>
+        <td class="text-end pe-4">
+            <button  class="btn btn-sm btn-outline-danger" onclick="removeRow(${price},this, ${index})">
+                Remove
+            </button>
+        </td>
+                `;
+
+            table.appendChild(row);
+
+
+            // 🔥 Add hidden input (this is what Spring reads)
+            const hidden = document.getElementById("hiddenInputs");
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = `menuSkus[${index}].id`;
+            input.value = id;
+            input.id = `input-${index}`;
+
+            hidden.appendChild(input);
+
+            index++;
+            count++;
+            currentPrice = Number(currentPrice) + Number(price);
+            counter.textContent = count.toString()
+            totalPriceInput.value = addDiscount(currentPrice)
+        }
+
+        function removeRow(price, button, idx) {
+            const totalPriceInput = document.getElementById("precioTotal")
+
+            let counter = document.getElementById("menuSkuCounter")
+            button.closest("tr").remove();
+
+            const input = document.getElementById(`input-${idx}`);
+            // const price = input.getAttribute("data-nombre")
+
+            if (input) input.remove();
+            count--;
+            counter.textContent = count.toString();
+            currentPrice = Number(currentPrice) - Number(price);
+            totalPriceInput.value = addDiscount(currentPrice)
+
+        }
+
+        function addDisscountOnChange() {
+            const totalPriceInput = document.getElementById("precioTotal")
+            const discount = document.getElementById("descuento")
+
+            totalPriceInput.value = Number(currentPrice) * Number(discount.value)
+        }
+
+        function addDiscount(currentPrice) {
+            const discount = document.getElementById("descuento")
+            if (Number(discount.value) === 0) {
+                return currentPrice;
+            } else {
+                return currentPrice * Number(discount.value)
+            }
+        }
+    </script>
 </html>

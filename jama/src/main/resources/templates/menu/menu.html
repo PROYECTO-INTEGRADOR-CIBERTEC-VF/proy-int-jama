@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Menu inicio</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    </head>
+    <body>
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-center">
+
+                <h2 class="mb-4">Gestión del Menu</h2>
+
+                <!-- Optional: show logged user -->
+                <p class="text-muted mb-4" th:text="'Usuario: ' + ${session.loginid}"></p>
+
+                <div class="d-grid gap-3">
+
+
+                    <a th:href="@{/menu/menu-listado}"
+                       class="btn btn-outline-primary px-4">
+                        📋 Listado de Menús
+                    </a>
+
+                    <a th:href="@{/menu/menu-registro-menu}"
+                       class="btn btn-success px-4">
+                        ➕ Registrar menú
+                    </a>
+
+                    <a th:href="@{/menu/menu-registro-sku}"
+                       class="btn btn-dark px-4">
+                        📦 Item SKU
+                    </a>
+                    <a th:href="@{/menu/menu-registro-categorias}"
+                       class="btn btn-warning px-4">
+                        🏷️ Categorías
+                    </a>
+
+                    <a th:href="@{/menu/menu-registro-tipos}"
+                       class="btn btn-info px-4 text-white">
+                        🔖 Tipos
+                    </a>
+
+
+                    <!-- Back button -->
+                    <a th:href="@{/menu/main-menu}" class="btn btn-secondary mt-3">
+                        Volver al menú principal
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+</html>

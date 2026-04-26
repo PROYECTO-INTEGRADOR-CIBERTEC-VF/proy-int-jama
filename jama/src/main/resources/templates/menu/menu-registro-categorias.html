@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Menu categorias</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    </head>
+    <body>
+        <div class="container mt-5">
+
+            <div class="card p-4 mx-auto" style="max-width: 500px;">
+                <h3 class="text-center mb-3">Registro</h3>
+
+                <form th:object="${menuCategory}" th:action="@{/menu/menu-registro-categorias}" method="post">
+
+                    <!-- ID hidden -->
+                    <input type="hidden" name="id" th:value="*{id}" th:field="*{id}">
+
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control"
+                               name="nombre"
+                               th:value="*{name}"
+                               th:field="*{name}"
+                               required>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control"
+                                  name="descripcion"
+                                  rows="3"
+                                  th:text="*{description}"
+                                  th:field="*{description}"
+                        ></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            Guardar
+                        </button>
+
+                        <button type="button" class="btn btn-secondary"
+                                onclick="history.back()">
+                            Cancelar
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- TABLE -->
+            <div class="card p-4">
+                <h4 class="mb-3 text-center">Listado</h4>
+
+                <table class="table table-bordered table-striped text-center">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="item : ${menuCategories}">
+
+                            <td th:text="${item.id}"></td>
+                            <td th:text="${item.name}"></td>
+                            <td th:text="${item.description}"></td>
+
+                            <td>
+                                <!-- EDIT -->
+                                <a th:href="@{/menu/menu-registro-categorias/{id}(id=${item.id})}"
+                                   class="btn btn-warning btn-sm">
+                                    ✏️
+                                </a>
+
+                                <!-- DELETE -->
+                                <form th:action="@{/menu/menu-registro-categorias/delete/{id}(id=${item.id})}"
+                                      style="display:inline;"
+                                      method="post">
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Eliminar?')">
+                                        🗑
+                                    </button>
+                                </form>
+                            </td>
+
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </body>
+</html>

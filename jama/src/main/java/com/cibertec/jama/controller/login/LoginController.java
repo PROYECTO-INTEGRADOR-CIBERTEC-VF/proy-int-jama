@@ -1,5 +1,6 @@
 package com.cibertec.jama.controller.login;
 
+import com.cibertec.jama.service.menu.MenuService;
 import com.cibertec.jama.service.usuario.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     private final UserService userService;
+    private final MenuService menuService;
     private boolean flagIsLoginOn = false;
 
     @GetMapping("/login")
@@ -21,6 +23,8 @@ public class LoginController {
         if (!flagIsLoginOn) {
             userService.initRolTable();
             userService.initPositionTable();
+            menuService.initTipos();
+            menuService.initCategories();
             flagIsLoginOn = true;
         }
         return "login/login";
