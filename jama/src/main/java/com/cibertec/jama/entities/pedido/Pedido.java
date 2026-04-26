@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class Pedido {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,6 +25,9 @@ public class Pedido {
     private String clienteNombre;
     private double precioTotal;
     private boolean pedidoEstaTerminado;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPedido estadoPedido = EstadoPedido.PENDIENTE;
 
     private Double startTime;
 
