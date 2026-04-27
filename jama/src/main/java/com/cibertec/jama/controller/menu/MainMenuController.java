@@ -144,11 +144,11 @@ public class MainMenuController {
     @GetMapping("/menu/menu-registro-sku/{id}")
     public String menuRegistroSkuUpdate(Model model, @PathVariable int id) {
         var sku = menuService.findSkuById(id);
-        if (sku == null){
+        if (sku == null) {
             return "redirect:/menu/menu-registro-sku";
         }
         var defaultType = sku.getMenuType();
-        var defaultCategory= sku.getMenuCategory();
+        var defaultCategory = sku.getMenuCategory();
 
         var image = sku.getMenuImage();
 
@@ -164,12 +164,14 @@ public class MainMenuController {
 
         return "menu/menu-registro-sku";
     }
+
     @PostMapping("/menu/menu-registro-sku/{id}")
     public String menuRegistroSkuUpdate(MenuSkuAndImageDto dto, @PathVariable int id) {
-        menuService.updateSku(id,dto);
+        menuService.updateSku(id, dto);
 
         return "redirect:/menu/menu-registro-sku";
     }
+
     @GetMapping("/menu/menu-registro-sku/delete/{id}")
     public String menuRegistroSkuDelete(@PathVariable int id) {
         menuService.deleteSku(id);
@@ -191,21 +193,28 @@ public class MainMenuController {
     }
 
     @PostMapping("/menu/menu-registro-menu")
-    public String menuRegistroMenu(Menu menu,Model model) {
+    public String menuRegistroMenu(Menu menu, Model model) {
         menuService.saveMenu(menu);
         return "redirect:/menu/menu-registro-menu";
     }
 
-    @GetMapping("/menu/menu-registro-menu/{id}")
+    @GetMapping("/menu/menu-registro-menu/edit/{id}")
     public String menuRegistroMenuUpdate(Model model, @PathVariable int id) {
         var menu = menuService.findMenuBydId(id);
-
+        var skuList = menuService.getAllSkusById(id);
         model.addAttribute("menuList", menu);
-        model.addAttribute("menuSkus", menuService.getAllSkus());
-        model.addAttribute("menusTableList", menuService.getAllMenus());
-        model.addAttribute("emptySkus", new ArrayList<MenuSku>());
 
-        return "menu/menu-registro-menu";
+        model.addAttribute("menuSkus", menuService.getAllSkus());
+        model.addAttribute("skuList", skuList);
+        model.addAttribute("skuListCount", skuList.size());
+
+        return "menu/menu-registro-menu-edit";
+    }
+
+    @PostMapping("/menu/menu-registro-menu/edit/{id}")
+    public String menuRegistroMenuUpdate(Menu menu, @PathVariable int id) {
+        menuService.updateMenu(menu, id);
+        return "redirect:/menu/menu-registro-menu";
     }
 
     @GetMapping("/menu/menu-registro-menu/delete/{id}")

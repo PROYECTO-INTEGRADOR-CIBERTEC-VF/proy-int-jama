@@ -269,4 +269,26 @@ public class MenuService {
     public void deleteMenuById(int id) {
         menuRepository.deleteById(id);
     }
+
+    public List<MenuSku> getAllSkusById(int id) {
+
+        var menu = menuRepository.findById(id).orElse(null);
+
+        return menuSkuRepository.findAllByMenus(menu);
+    }
+
+    public void updateMenu(Menu menuForm, int id) {
+        var skusForm = menuForm.getMenuSkus();
+
+        var menu = menuRepository.findById(id).orElse(null);
+        assert menu != null : "menu not found";
+
+        menu.setNombre(menuForm.getNombre());
+        menu.setEstaBloqueado(menuForm.isEstaBloqueado());
+ menu.setPrecioTotal(menuForm.getPrecioTotal());
+ menu.setDescuento(menuForm.getDescuento());
+ menu.setMenuSkus(skusForm);
+       menuRepository.save(menu);
+
+    }
 }
