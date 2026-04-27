@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Pedido</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark text-light">
+
+<nav class="navbar navbar-dark bg-black px-4">
+    <a class="navbar-brand fw-bold" th:href="@{/pedido}">Pedidos</a>
+
+    <div>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-light btn-sm">← Menú principal</a>
+        <a th:href="@{/pedido}" class="btn btn-outline-warning btn-sm">Pedidos</a>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <div class="card bg-secondary-subtle text-dark shadow">
+        <div class="card-header bg-warning">
+            <h4>Editar pedido</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form th:action="@{/pedido/actualizar/{id}(id=${pedido.id})}" method="post">
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" name="mesa" th:value="${pedido.mesa}" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="text" name="clienteNombre" th:value="${pedido.clienteNombre}" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="text" name="comentarios" th:value="${pedido.comentarios}" class="form-control">
+                    </div>
+                </div>
+
+                <button class="btn btn-success">Guardar cambios</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

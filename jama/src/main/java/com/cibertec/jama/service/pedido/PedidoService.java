@@ -1,89 +1,132 @@
 package com.cibertec.jama.service.pedido;
 
+import com.cibertec.jama.entities.menu.Menu;
+import com.cibertec.jama.entities.menu.MenuSku;
 import com.cibertec.jama.entities.pedido.EstadoPedido;
 import com.cibertec.jama.entities.pedido.Pedido;
 import com.cibertec.jama.entities.pedido.PedidoExtra;
 import com.cibertec.jama.entities.pedido.PedidoItem;
-import com.cibertec.jama.repositories.pedido.PedidoExtraRepository;
-import com.cibertec.jama.repositories.pedido.PedidoItemRepository;
+import com.cibertec.jama.repositories.menu.MenuRepository;
+import com.cibertec.jama.repositories.menu.MenuSkuRepository;
 import com.cibertec.jama.repositories.pedido.PedidoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
-    private final PedidoItemRepository pedidoItemRepository;
-    private final PedidoExtraRepository pedidoExtraRepository;
+    private final MenuRepository menuRepository;
+    private final MenuSkuRepository menuSkuRepository;
 
     public PedidoService(PedidoRepository pedidoRepository,
-                         PedidoItemRepository pedidoItemRepository,
-                         PedidoExtraRepository pedidoExtraRepository) {
+                         MenuRepository menuRepository,
+                         MenuSkuRepository menuSkuRepository) {
         this.pedidoRepository = pedidoRepository;
-        this.pedidoItemRepository = pedidoItemRepository;
-        this.pedidoExtraRepository = pedidoExtraRepository;
+        this.menuRepository = menuRepository;
+        this.menuSkuRepository = menuSkuRepository;
+    }
+
+    public List<Pedido> listarTodos() {
+        return pedidoRepository.findAllByOrderByIdAsc();
     }
 
     public List<Pedido> listarPedidosPendientes() {
-        List<Pedido> pedidos = pedidoRepository.findByEstadoPedidoNotOrderByIdAsc(EstadoPedido.TERMINADO);
-
-        if (pedidos.isEmpty()) {
-            pedidos = pedidoRepository.findByPedidoEstaTerminadoFalseOrderByIdAsc();
-        }
-
-        return pedidos;
+        return pedidoRepository.findByEstadoPedidoNotOrderByIdAsc(EstadoPedido.TERMINADO);
     }
 
-    public void cambiarEstadoPedido(int pedidoId, EstadoPedido nuevoEstado) {
-        Pedido pedido = pedidoRepository.findById(pedidoId)
+    public Pedido buscarPorId(int id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+    }
+
+    public void guardarPedido(String mesa,
+                              String clienteNombre,
+                              String comentarios,
+                              Integer[] menuIds,
+                              Integer[] menuCantidades,
+                              Integer[] skuIds,
+                              Integer[] skuCantidades) {
+
+        if (mesa == null || mesa.isBlank()) {
+            throw new RuntimeException("Mesa obligatoria");
+        }
+
+        if (clienteNombre == null || clienteNombre.isBlank()) {
+            throw new RuntimeException("Cliente obligatorio");
+        }
+
+        Pedido pedido = new Pedido();
+        pedido.setMesa(mesa);
+        pedido.setClienteNombre(clienteNombre);
+        pedido.setComentarios(comentarios);
+
+        // Estado inicial correcto según HU-03
+        pedido.setEstadoPedido(EstadoPedido.PENDIENTE);
+        pedido.setPedidoEstaTerminado(false);
+
+        double total = 0;
+
+        List<PedidoItem> items = new ArrayList<>();
+        List<PedidoExtra> extras = new ArrayList<>();
+
+        if (menuIds != null) {
+            for (int i = 0; i < menuIds.length; i++) {
+                Menu menu = menuRepository.findById(menuIds[i])
+                        .orElseThrow(() -> new RuntimeException("Menú no encontrado"));
+
+                int cantidad = menuCantidades[i];
+
+                PedidoItem item = new PedidoItem();
+                item.setPedido(pedido);
+                item.setMenu(menu);
+                item.setCantidad(cantidad);
+                item.setEstaTerminado(false);
+
+                total += menu.getPrecioTotal() * cantidad;
+                items.add(item);
+            }
+        }
+
+        if (skuIds != null) {
+            for (int i = 0; i < skuIds.length; i++) {
+                MenuSku menuSku = menuSkuRepository.findById(skuIds[i])
+                        .orElseThrow(() -> new RuntimeException("Extra no encontrado"));
+
+                int cantidad = skuCantidades[i];
+
+                PedidoExtra extra = new PedidoExtra();
+                extra.setPedido(pedido);
+                extra.setMenuSku(menuSku);
+                extra.setCantidad(cantidad);
+                extra.setEstaTerminado(false);
+
+                total += menuSku.getPrecio() * cantidad;
+                extras.add(extra);
+            }
+        }
+
+        pedido.setPrecioTotal(total);
+        pedido.setPedidoItems(items);
+        pedido.setPedidoExtras(extras);
+
+        pedidoRepository.save(pedido);
+    }
+
+    public void actualizarPedido(int id, String mesa, String clienteNombre, String comentarios) {
+        Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
-        pedido.setEstadoPedido(nuevoEstado);
-        pedido.setPedidoEstaTerminado(nuevoEstado == EstadoPedido.TERMINADO);
+        pedido.setMesa(mesa);
+        pedido.setClienteNombre(clienteNombre);
+        pedido.setComentarios(comentarios);
 
         pedidoRepository.save(pedido);
     }
 
-    public void terminarItem(int itemId) {
-        PedidoItem item = pedidoItemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
-
-        item.setEstaTerminado(true);
-        pedidoItemRepository.save(item);
-
-        actualizarEstadoGeneral(item.getPedido());
-    }
-
-    public void terminarExtra(int extraId) {
-        PedidoExtra extra = pedidoExtraRepository.findById(extraId)
-                .orElseThrow(() -> new RuntimeException("Extra no encontrado"));
-
-        extra.setEstaTerminado(true);
-        pedidoExtraRepository.save(extra);
-
-        actualizarEstadoGeneral(extra.getPedido());
-    }
-
-    private void actualizarEstadoGeneral(Pedido pedido) {
-        boolean todosItemsTerminados = pedido.getPedidoItems() == null ||
-                pedido.getPedidoItems().stream().allMatch(PedidoItem::isEstaTerminado);
-
-        boolean todosExtrasTerminados = pedido.getPedidoExtras() == null ||
-                pedido.getPedidoExtras().stream().allMatch(PedidoExtra::isEstaTerminado);
-
-        boolean tieneItems = pedido.getPedidoItems() != null && !pedido.getPedidoItems().isEmpty();
-        boolean tieneExtras = pedido.getPedidoExtras() != null && !pedido.getPedidoExtras().isEmpty();
-
-        if (todosItemsTerminados && todosExtrasTerminados && (tieneItems || tieneExtras)) {
-            pedido.setEstadoPedido(EstadoPedido.TERMINADO);
-            pedido.setPedidoEstaTerminado(true);
-        } else {
-            pedido.setEstadoPedido(EstadoPedido.EN_PREPARACION);
-            pedido.setPedidoEstaTerminado(false);
-        }
-
-        pedidoRepository.save(pedido);
+    public void eliminarPedido(int id) {
+        pedidoRepository.deleteById(id);
     }
 }

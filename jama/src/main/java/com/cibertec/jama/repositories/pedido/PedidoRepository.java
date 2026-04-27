@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
-    List<Pedido> findByEstadoPedidoNotOrderByIdAsc(EstadoPedido estadoPedido);
+    List<Pedido> findAllByOrderByIdAsc();
 
-    List<Pedido> findByPedidoEstaTerminadoFalseOrderByIdAsc();
+    List<Pedido> findByEstadoPedidoNotOrderByIdAsc(EstadoPedido estadoPedido);
 }

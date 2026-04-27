@@ -1,10 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Registro de pedidos</title>
+    <title>Registrar Pedido</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-dark text-light">
+
+<nav class="navbar navbar-dark bg-black px-4">
+    <a class="navbar-brand fw-bold" th:href="@{/pedido}">Pedidos</a>
+
+    <div>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-light btn-sm">← Menú principal</a>
+        <a th:href="@{/pedido}" class="btn btn-outline-warning btn-sm">Pedidos</a>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <div class="card bg-secondary-subtle text-dark shadow">
+        <div class="card-header bg-warning">
+            <h4>Registrar pedido</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form th:action="@{/pedido/guardar}" method="post">
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" name="mesa" class="form-control" placeholder="Mesa" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="text" name="clienteNombre" class="form-control" placeholder="Cliente" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="text" name="comentarios" class="form-control" placeholder="Comentarios">
+                    </div>
+                </div>
+
+                <h5>Menú</h5>
+                <select id="menuSelect" class="form-select mb-2">
+                    <option value="">Seleccione</option>
+                    <option th:each="m : ${menus}"
+                            th:value="${m.id}"
+                            th:data-precio="${m.precioTotal}"
+                            th:data-nombre="${m.nombre}"
+                            th:text="${m.nombre + ' - S/ ' + m.precioTotal}">
+                    </option>
+                </select>
+
+                <button type="button" class="btn btn-warning mb-3" onclick="addMenu()">Agregar menú</button>
+
+                <h5>Extras</h5>
+                <select id="extraSelect" class="form-select mb-2">
+                    <option value="">Seleccione</option>
+                    <option th:each="e : ${menuSkus}"
+                            th:value="${e.id}"
+                            th:data-precio="${e.precio}"
+                            th:data-nombre="${e.nombre}"
+                            th:text="${e.nombre + ' - S/ ' + e.precio}">
+                    </option>
+                </select>
+
+                <button type="button" class="btn btn-secondary mb-3" onclick="addExtra()">Agregar extra</button>
+
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                    <tr><th>Producto</th><th>Precio</th></tr>
+                    </thead>
+                    <tbody id="carrito"></tbody>
+                </table>
+
+                <div id="inputs"></div>
+
+                <button class="btn btn-success">Guardar pedido</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function addMenu(){
+        let s = document.getElementById("menuSelect");
+        if(!s.value) return;
+        let o = s.options[s.selectedIndex];
+
+        document.getElementById("carrito").innerHTML +=
+            `<tr><td>${o.dataset.nombre}</td><td>S/ ${o.dataset.precio}</td></tr>`;
+
+        document.getElementById("inputs").innerHTML +=
+            `<input type="hidden" name="menuIds" value="${s.value}">
+         <input type="hidden" name="menuCantidades" value="1">`;
+    }
+
+    function addExtra(){
+        let s = document.getElementById("extraSelect");
+        if(!s.value) return;
+        let o = s.options[s.selectedIndex];
+
+        document.getElementById("carrito").innerHTML +=
+            `<tr><td>${o.dataset.nombre}</td><td>S/ ${o.dataset.precio}</td></tr>`;
+
+        document.getElementById("inputs").innerHTML +=
+            `<input type="hidden" name="skuIds" value="${s.value}">
+         <input type="hidden" name="skuCantidades" value="1">`;
+    }
+</script>
 
 </body>
 </html>

@@ -1,19 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<a th:href="@{/pedido/registrar-pedido}">
-    <button>
-        Registrar pedidos
-    </button>
-</a>
-<a th:href="@{/pedido/seguimiento-pedido}">
-    <button>
-        Seguimiento de pedidos
-    </button>
-</a>
+<body class="bg-dark text-light">
+
+<nav class="navbar navbar-dark bg-black px-4">
+    <a class="navbar-brand fw-bold" th:href="@{/pedido}">Pedidos</a>
+
+    <div>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-light btn-sm">← Menú principal</a>
+        <a th:href="@{/pedido/registrar-pedido}" class="btn btn-warning btn-sm">Nuevo pedido</a>
+        <a th:href="@{/pedido/seguimiento-pedido}" class="btn btn-success btn-sm">Seguimiento</a>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <div th:if="${param.success}" class="alert alert-success">
+        Pedido guardado correctamente
+    </div>
+
+    <div class="card bg-secondary-subtle text-dark shadow">
+        <div class="card-header bg-warning">
+            <h4 class="mb-0">Listado de pedidos</h4>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Mesa</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}"></td>
+                    <td th:text="${pedido.mesa}"></td>
+                    <td th:text="${pedido.clienteNombre}"></td>
+                    <td><span class="badge bg-primary" th:text="${pedido.estadoPedido}"></span></td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(pedido.precioTotal,1,2)}"></td>
+                    <td>
+                        <a th:href="@{/pedido/editar/{id}(id=${pedido.id})}" class="btn btn-sm btn-warning">Editar</a>
+
+                        <form th:action="@{/pedido/eliminar/{id}(id=${pedido.id})}" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-danger"
+                                    onclick="return confirm('¿Eliminar pedido?')">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>
