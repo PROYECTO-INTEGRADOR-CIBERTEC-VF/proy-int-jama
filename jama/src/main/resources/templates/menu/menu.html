@@ -1,57 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Menu inicio</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión del Menú - FastFood Jama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    </head>
-    <body>
-        <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="text-center">
+    <style>
+        .menu-btn {
+            transition: all 0.25s ease;
+            border-radius: 10px;
+        }
 
-                <h2 class="mb-4">Gestión del Menu</h2>
+        .menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
 
-                <!-- Optional: show logged user -->
-                <p class="text-muted mb-4" th:text="'Usuario: ' + ${session.loginid}"></p>
+        .menu-icon {
+            font-size: 1.3rem;
+            margin-right: 8px;
+        }
+    </style>
+</head>
 
-                <div class="d-grid gap-3">
+<body class="bg-dark text-light">
 
+<nav class="navbar navbar-dark bg-black px-4">
+    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
 
-                    <a th:href="@{/menu/menu-listado}"
-                       class="btn btn-outline-primary px-4">
-                        📋 Listado de Menús
-                    </a>
+    <div>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-light btn-sm">← Menú principal</a>
+    </div>
+</nav>
 
-                    <a th:href="@{/menu/menu-registro-menu}"
-                       class="btn btn-success px-4">
-                        ➕ Registrar menú
-                    </a>
+<div class="container d-flex justify-content-center align-items-center" style="height: 85vh;">
 
-                    <a th:href="@{/menu/menu-registro-sku}"
-                       class="btn btn-dark px-4">
-                        📦 Item SKU
-                    </a>
-                    <a th:href="@{/menu/menu-registro-categorias}"
-                       class="btn btn-warning px-4">
-                        🏷️ Categorías
-                    </a>
+    <div class="card bg-secondary-subtle text-dark shadow text-center" style="width: 400px;">
 
-                    <a th:href="@{/menu/menu-registro-tipos}"
-                       class="btn btn-info px-4 text-white">
-                        🔖 Tipos
-                    </a>
-
-
-                    <!-- Back button -->
-                    <a th:href="@{/menu/main-menu}" class="btn btn-secondary mt-3">
-                        Volver al menú principal
-                    </a>
-
-                </div>
-
-            </div>
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0 fw-bold">Gestión del Menú</h3>
         </div>
 
-    </body>
+        <div class="card-body">
+
+            <p class="text-muted mb-3" th:text="'Usuario: ' + ${session.loginid}"></p>
+
+            <p class="text-muted mb-4">
+                Administra los productos del sistema
+            </p>
+
+            <div class="d-grid gap-3">
+
+                <a th:href="@{/menu/menu-listado}"
+                   class="btn btn-outline-primary menu-btn fw-bold">
+                    <span class="menu-icon">📋</span> Listado de Menús
+                </a>
+
+                <a th:href="@{/menu/menu-registro-menu}"
+                   class="btn btn-success menu-btn fw-bold">
+                    <span class="menu-icon">➕</span> Registrar menú
+                </a>
+
+                <a th:href="@{/menu/menu-registro-sku}"
+                   class="btn btn-dark menu-btn fw-bold">
+                    <span class="menu-icon">📦</span> Item SKU
+                </a>
+
+                <a th:href="@{/menu/menu-registro-categorias}"
+                   class="btn btn-warning menu-btn fw-bold">
+                    <span class="menu-icon">🏷️</span> Categorías
+                </a>
+
+                <a th:href="@{/menu/menu-registro-tipos}"
+                   class="btn btn-info text-white menu-btn fw-bold">
+                    <span class="menu-icon">🔖</span> Tipos
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
 </html>

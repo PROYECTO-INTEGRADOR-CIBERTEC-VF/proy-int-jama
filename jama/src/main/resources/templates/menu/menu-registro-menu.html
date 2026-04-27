@@ -1,255 +1,248 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Menu Form</title>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Menú - FastFood Jama</title>
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
-        <style>
-            body {
-                background-color: #f5f7fa;
-            }
+    <style>
+        .menu-btn {
+            transition: all 0.25s ease;
+            border-radius: 10px;
+        }
 
-            .panel {
-                background: #fff;
-                border-radius: 16px;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-                padding: 24px;
-            }
+        .menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
 
-            .section-title {
-                font-weight: 700;
-                margin-bottom: 1rem;
-            }
+        .panel {
+            border-radius: 16px;
+        }
 
-            .sku-card {
-                border: 1px solid #dee2e6;
-                border-radius: 14px;
-                padding: 16px;
-                margin-bottom: 16px;
-                background: #fafafa;
-            }
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
 
-            .remove-btn {
-                margin-top: 32px;
-            }
-        </style>
-    </head>
-    <body>
+<body class="bg-dark text-light">
 
-        <div class="container-fluid py-4">
-            <div class="row g-4">
+<nav class="navbar navbar-dark bg-black px-4">
+    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
 
-                <!-- LEFT SIDE: MENU FORM -->
-                <div class="col-lg-5">
-                    <div class="panel">
-                        <h3 class="section-title">Menu Form</h3>
+    <div>
+        <a th:href="@{/menu}" class="btn btn-outline-light btn-sm">← Gestión del menú</a>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-warning btn-sm">Menú principal</a>
+    </div>
+</nav>
 
-                        <form th:object="${menuList}" th:action="@{/menu/menu-registro-menu}" method="post">
-                            <input type="hidden" name="id" th:field="*{id}">
+<div class="container-fluid py-4">
+    <div class="row g-4">
 
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" id="nombre" name="nombre" class="form-control"
-                                       placeholder="Menu name"
-                                       th:field="*{nombre}" required>
-                            </div>
-
-                            <div class="mb-3 form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado"
-                                       th:field="*{estaBloqueado}">
-                                <label class="form-check-label" for="estaBloqueado">Está bloqueado</label>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="precioTotal" class="form-label">Precio Total</label>
-                                <input type="number" step="0.01" id="precioTotal" name="precioTotal"
-                                       class="form-control"
-                                       th:field="*{precioTotal}" placeholder="0.00"
-                                       readonly
-                                >
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="descuento" class="form-label">Descuento</label>
-                                <input type="number" step="0.01" id="descuento" name="descuento" class="form-control"
-                                       th:field="*{descuento}" placeholder="0.00"
-                                       onchange="addDisscountOnChange()"
-                                >
-                            </div>
-
-                            <hr class="my-4">
-
-                            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                                <h4 class="section-title mb-0">Menu SKUs</h4>
-
-                                <div class="d-flex align-items-center gap-2 ms-auto">
-                                    <select id="skuSelect"
-                                            class="form-select form-select-sm w-auto rounded-3 shadow-sm"
-                                            style="min-width: 220px;">
-                                        <option
-                                                th:each="sku : ${menuSkus}"
-                                                th:value="${sku.id}"
-                                                th:text="${sku.nombre}"
-                                                th:attr="
-                                                data-nombre=${sku.precio}
-                                                "
-                                        ></option>
-
-                                    </select>
-
-                                    <button type="button"
-                                            class="btn btn-primary btn-sm rounded-3 px-3"
-                                            onclick="addSku()"
-                                    >
-                                        + Add MenuSku
-                                    </button>
-
-                                </div>
-                            </div>
-                            <!--hidden inputs that sping will read-->
-                            <div id="hiddenInputs" hidden>
-
-                            </div>
-
-                            <!--card skus-->
-                            <div class="card shadow-sm border-0 rounded-4 mt-3">
-                                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0 fw-semibold">Selected Menu SKUs</h5>
-                                    <span id="menuSkuCounter" class="badge bg-primary">0</span>
-                                </div>
-
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle mb-0" id="skuTableBody">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th class="ps-4">ID</th>
-                                                    <th>Nombre</th>
-                                                    <th>Precio</th>
-                                                    <th class="text-end pe-4">Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 mt-4">
-                                <button type="submit" class="btn btn-success w-100">Save Menu</button>
-                                <button type="reset" class="btn btn-outline-secondary w-100">Clear</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div>
-                        <!-- Back button -->
-                        <div class="text-left mt-3">
-                            <a class="btn btn-secondary">Volver</a>
-                        </div>
-                    </div>
+        <div class="col-lg-5">
+            <div class="card bg-secondary-subtle text-dark shadow panel">
+                <div class="card-header bg-warning text-center">
+                    <h3 class="mb-0 fw-bold">Registro de Menú</h3>
                 </div>
 
-                <!-- RIGHT SIDE: LIST -->
-                <div class="col-lg-7">
-                    <div class="panel">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="section-title mb-0">Menu List</h3>
-                            <input type="text" class="form-control w-auto" placeholder="Search...">
+                <div class="card-body">
+                    <form th:object="${menuList}" th:action="@{/menu/menu-registro-menu}" method="post">
+                        <input type="hidden" name="id" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control"
+                                   placeholder="Nombre del menú"
+                                   th:field="*{nombre}" required>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Bloqueado</th>
-                                        <th>Precio Total</th>
-                                        <th>Descuento</th>
-                                        <th># SKUs</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="menu : ${menusTableList}">
-                                        <td th:text="${menu.id}">1</td>
-                                        <td th:text="${menu.nombre}"></td>
-                                        <td>
-                                            <span th:text="${menu.estaBloqueado}" class="badge bg-success"></span>
-                                        </td>
-                                        <td th:text="${menu.precioTotal}"></td>
-                                        <td th:text="${menu.descuento}"></td>
-                                        <td>
-                                            <p th:each="m : ${menu.menuSkus}"
-                                               th:text="${m.nombre}"></p>
-                                        </td>
-                                        <td>
-                                            <a th:href="@{/menu/menu-registro-menu/edit/{id}(id= ${menu.id})}"
-                                               class="btn btn-sm btn-warning">Edit
-                                            </a>
-                                            <a th:href="@{/menu/menu-registro-menu/delete/{id}(id= ${menu.id})}"
-                                               class="btn btn-sm btn-danger">Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado"
+                                   th:field="*{estaBloqueado}">
+                            <label class="form-check-label" for="estaBloqueado">Está bloqueado</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="precioTotal" class="form-label">Precio Total</label>
+                            <input type="number" step="0.01" id="precioTotal" name="precioTotal"
+                                   class="form-control"
+                                   th:field="*{precioTotal}" placeholder="0.00"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descuento" class="form-label">Descuento</label>
+                            <input type="number" step="0.01" id="descuento" name="descuento" class="form-control"
+                                   th:field="*{descuento}" placeholder="0.00"
+                                   onchange="addDisscountOnChange()">
                         </div>
 
                         <hr class="my-4">
 
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <h4 class="section-title mb-0">Menu SKUs</h4>
 
-                    </div>
+                            <div class="d-flex align-items-center gap-2 ms-auto">
+                                <select id="skuSelect"
+                                        class="form-select form-select-sm w-auto rounded-3 shadow-sm"
+                                        style="min-width: 220px;">
+                                    <option
+                                            th:each="sku : ${menuSkus}"
+                                            th:value="${sku.id}"
+                                            th:text="${sku.nombre}"
+                                            th:attr="
+                                            data-nombre=${sku.precio}
+                                            ">
+                                    </option>
+                                </select>
+
+                                <button type="button"
+                                        class="btn btn-primary btn-sm rounded-3 px-3 menu-btn"
+                                        onclick="addSku()">
+                                    + Add MenuSku
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="hiddenInputs" hidden></div>
+
+                        <div class="card shadow-sm border-0 rounded-4 mt-3">
+                            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-semibold">Selected Menu SKUs</h5>
+                                <span id="menuSkuCounter" class="badge bg-primary">0</span>
+                            </div>
+
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0" id="skuTableBody">
+                                        <thead class="table-dark">
+                                        <tr>
+                                            <th class="ps-4">ID</th>
+                                            <th>Nombre</th>
+                                            <th>Precio</th>
+                                            <th class="text-end pe-4">Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success w-100 fw-bold menu-btn">Save Menu</button>
+                            <button type="reset" class="btn btn-outline-secondary w-100 fw-bold">Clear</button>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
+            <div class="text-left mt-3">
+                <a th:href="@{/menu}" class="btn btn-secondary">Volver</a>
             </div>
         </div>
 
+        <div class="col-lg-7">
+            <div class="card bg-secondary-subtle text-dark shadow panel">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0 fw-bold">Menu List</h3>
+                        <input type="text" class="form-control w-auto" placeholder="Search...">
+                    </div>
+                </div>
 
-    </body>
-    <script>
-        let index = 0
-        let count = 0
-        let currentPrice = 0
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Bloqueado</th>
+                                <th>Precio Total</th>
+                                <th>Descuento</th>
+                                <th># SKUs</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="menu : ${menusTableList}">
+                                <td th:text="${menu.id}">1</td>
+                                <td th:text="${menu.nombre}"></td>
+                                <td>
+                                    <span th:text="${menu.estaBloqueado}" class="badge bg-success"></span>
+                                </td>
+                                <td th:text="${menu.precioTotal}"></td>
+                                <td th:text="${menu.descuento}"></td>
+                                <td>
+                                    <p th:each="m : ${menu.menuSkus}"
+                                       th:text="${m.nombre}"></p>
+                                </td>
+                                <td>
+                                    <a th:href="@{/menu/menu-registro-menu/edit/{id}(id= ${menu.id})}"
+                                       class="btn btn-sm btn-warning menu-btn">Edit
+                                    </a>
+                                    <a th:href="@{/menu/menu-registro-menu/delete/{id}(id= ${menu.id})}"
+                                       class="btn btn-sm btn-danger menu-btn">Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-        function addSku() {
+                    <hr class="my-4">
+                </div>
+            </div>
+        </div>
 
-            const totalPriceInput = document.getElementById("precioTotal")
+    </div>
+</div>
 
-            const select = document.getElementById("skuSelect");
-            const selectedOption = select.options[select.selectedIndex];
+</body>
 
-            const id = select.value
-            let idExist = false
+<script>
+    let index = 0
+    let count = 0
+    let currentPrice = 0
 
-            // it problably should to be able to add multiple items
-            const rowsInTable = document.querySelectorAll('.the-row-id-for-skus-table')
-            rowsInTable.forEach(row => {
-                console.log(row.textContent === `#${id}`)
-                if (row.textContent === `#${id}`) {
-                    alert('sku ya existe en la lista')
-                    idExist = true
-                }
-            })
+    function addSku() {
 
-            if (idExist) return;
+        const totalPriceInput = document.getElementById("precioTotal")
 
+        const select = document.getElementById("skuSelect");
+        const selectedOption = select.options[select.selectedIndex];
 
-            const name = selectedOption.text
+        const id = select.value
+        let idExist = false
 
-            const price = selectedOption.getAttribute("data-nombre")
+        const rowsInTable = document.querySelectorAll('.the-row-id-for-skus-table')
+        rowsInTable.forEach(row => {
+            console.log(row.textContent === `#${id}`)
+            if (row.textContent === `#${id}`) {
+                alert('sku ya existe en la lista')
+                idExist = true
+            }
+        })
 
-            let counter = document.getElementById("menuSkuCounter")
-            if (!id) return;
+        if (idExist) return;
 
-            const table = document.getElementById("skuTableBody");
+        const name = selectedOption.text
 
+        const price = selectedOption.getAttribute("data-nombre")
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
+        let counter = document.getElementById("menuSkuCounter")
+        if (!id) return;
+
+        const table = document.getElementById("skuTableBody");
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
         <td class="ps-4 fw-semibold text-primary the-row-id-for-skus-table">#${id}</td>
         <td>${name}</td>
         <td>${price}</td>
@@ -260,57 +253,54 @@
         </td>
                 `;
 
-            table.appendChild(row);
+        table.appendChild(row);
 
+        const hidden = document.getElementById("hiddenInputs");
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = `menuSkus[${index}].id`;
+        input.value = id;
+        input.id = `input-${index}`;
 
-            // 🔥 Add hidden input (this is what Spring reads)
-            const hidden = document.getElementById("hiddenInputs");
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = `menuSkus[${index}].id`;
-            input.value = id;
-            input.id = `input-${index}`;
+        hidden.appendChild(input);
 
-            hidden.appendChild(input);
+        index++;
+        count++;
+        currentPrice = Number(currentPrice) + Number(price);
+        counter.textContent = count.toString()
+        totalPriceInput.value = addDiscount(currentPrice)
+    }
 
-            index++;
-            count++;
-            currentPrice = Number(currentPrice) + Number(price);
-            counter.textContent = count.toString()
-            totalPriceInput.value = addDiscount(currentPrice)
+    function removeRow(price, button, idx) {
+        const totalPriceInput = document.getElementById("precioTotal")
+
+        let counter = document.getElementById("menuSkuCounter")
+        button.closest("tr").remove();
+
+        const input = document.getElementById(`input-${idx}`);
+
+        if (input) input.remove();
+        count--;
+        counter.textContent = count.toString();
+        currentPrice = Number(currentPrice) - Number(price);
+        totalPriceInput.value = addDiscount(currentPrice)
+
+    }
+
+    function addDisscountOnChange() {
+        const totalPriceInput = document.getElementById("precioTotal")
+        const discount = document.getElementById("descuento")
+
+        totalPriceInput.value = Number(currentPrice) * Number(discount.value)
+    }
+
+    function addDiscount(currentPrice) {
+        const discount = document.getElementById("descuento")
+        if (Number(discount.value) === 0) {
+            return currentPrice;
+        } else {
+            return currentPrice * Number(discount.value)
         }
-
-        function removeRow(price, button, idx) {
-            const totalPriceInput = document.getElementById("precioTotal")
-
-            let counter = document.getElementById("menuSkuCounter")
-            button.closest("tr").remove();
-
-            const input = document.getElementById(`input-${idx}`);
-            // const price = input.getAttribute("data-nombre")
-
-            if (input) input.remove();
-            count--;
-            counter.textContent = count.toString();
-            currentPrice = Number(currentPrice) - Number(price);
-            totalPriceInput.value = addDiscount(currentPrice)
-
-        }
-
-        function addDisscountOnChange() {
-            const totalPriceInput = document.getElementById("precioTotal")
-            const discount = document.getElementById("descuento")
-
-            totalPriceInput.value = Number(currentPrice) * Number(discount.value)
-        }
-
-        function addDiscount(currentPrice) {
-            const discount = document.getElementById("descuento")
-            if (Number(discount.value) === 0) {
-                return currentPrice;
-            } else {
-                return currentPrice * Number(discount.value)
-            }
-        }
-    </script>
+    }
+</script>
 </html>

@@ -1,106 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Registrar tipos</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tipos - FastFood Jama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    </head>
-    <body>
-        <div class="container mt-5">
+    <style>
+        .menu-btn {
+            transition: all 0.25s ease;
+            border-radius: 10px;
+        }
 
-            <div class="card p-4 mx-auto" style="max-width: 500px;">
-                <h3 class="text-center mb-3">Registro tipos</h3>
+        .menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
 
-                <form th:object="${type}" th:action="@{/menu/menu-registro-tipos}" method="post">
+<body class="bg-dark text-light">
 
-                    <!-- ID hidden -->
-                    <input type="hidden" name="id" th:value="*{id}" th:field="*{id}">
+<nav class="navbar navbar-dark bg-black px-4">
+    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
 
-                    <!-- Nombre -->
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control"
-                               name="nombre"
-                               th:value="*{nombre}"
-                               th:field="*{nombre}"
-                               required>
-                    </div>
+    <div>
+        <a th:href="@{/menu}" class="btn btn-outline-light btn-sm">← Gestión del menú</a>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-warning btn-sm">Menú principal</a>
+    </div>
+</nav>
 
-                    <!-- Descripción -->
-                    <div class="mb-3">
-                        <label class="form-label">Descripción</label>
-                        <textarea class="form-control"
-                                  name="descripcion"
-                                  rows="3"
-                                  th:text="*{descripcion}"
-                                  th:field="*{descripcion}"
-                        ></textarea>
-                    </div>
+<div class="container py-4">
 
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary">
-                            Guardar
-                        </button>
+    <!-- FORM -->
+    <div class="card bg-secondary-subtle text-dark shadow mb-4" style="max-width: 600px; margin: auto;">
 
-                        <button type="button" class="btn btn-secondary"
-                                onclick="history.back()">
-                            Cancelar
-                        </button>
-                    </div>
+        <div class="card-header bg-info text-white text-center">
+            <h3 class="mb-0 fw-bold">Registro de Tipos</h3>
+        </div>
 
-                </form>
-            </div>
+        <div class="card-body">
 
-            <!-- TABLE -->
-            <div class="card p-4">
-                <h4 class="mb-3 text-center">Listado</h4>
+            <form th:object="${type}" th:action="@{/menu/menu-registro-tipos}" method="post">
 
-                <table class="table table-bordered table-striped text-center">
+                <input type="hidden" name="id" th:value="*{id}" th:field="*{id}">
 
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control"
+                           name="nombre"
+                           th:value="*{nombre}"
+                           th:field="*{nombre}"
+                           required>
+                </div>
 
-                    <tbody>
-                        <tr th:each="item : ${menuTipos}">
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control"
+                              name="descripcion"
+                              rows="3"
+                              th:text="*{descripcion}"
+                              th:field="*{descripcion}">
+                    </textarea>
+                </div>
 
-                            <td th:text="${item.id}"></td>
-                            <td th:text="${item.nombre}"></td>
-                            <td th:text="${item.descripcion}"></td>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success fw-bold menu-btn">
+                        Guardar
+                    </button>
 
-                            <td>
-                                <!-- EDIT -->
-                                <a th:href="@{/menu/menu-registro-categorias/{id}(id=${item.id})}"
-                                   class="btn btn-warning btn-sm">
-                                    ✏️
-                                </a>
+                    <button type="button" class="btn btn-secondary fw-bold"
+                            onclick="history.back()">
+                        Cancelar
+                    </button>
+                </div>
 
-                                <!-- DELETE -->
-                                <form th:action="@{/menu/menu-registro-categorias/delete/{id}(id=${item.id})}"
-                                      style="display:inline;"
-                                      method="post"
-                                >
-                                    <button type="submit"
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('¿Eliminar?')">
-                                        🗑
-                                    </button>
-                                </form>
-                            </td>
-
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
+            </form>
 
         </div>
-    </body>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card bg-secondary-subtle text-dark shadow">
+
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0 fw-bold">Listado de Tipos</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover align-middle text-center">
+
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="item : ${menuTipos}">
+
+                    <td th:text="${item.id}"></td>
+                    <td th:text="${item.nombre}"></td>
+                    <td th:text="${item.descripcion}"></td>
+
+                    <td>
+                        <a th:href="@{/menu/menu-registro-categorias/{id}(id=${item.id})}"
+                           class="btn btn-warning btn-sm menu-btn">
+                            ✏️
+                        </a>
+
+                        <form th:action="@{/menu/menu-registro-categorias/delete/{id}(id=${item.id})}"
+                              style="display:inline;"
+                              method="post">
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm menu-btn"
+                                    onclick="return confirm('¿Eliminar?')">
+                                🗑
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
 </html>
