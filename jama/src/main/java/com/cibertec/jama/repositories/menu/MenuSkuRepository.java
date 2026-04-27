@@ -8,6 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface MenuSkuRepository  extends JpaRepository<MenuSku, Integer> {
-
+    List<MenuSku> findAllByMenus(Menu menus);
 
 }
