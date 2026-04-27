@@ -62,8 +62,6 @@ public class PedidoService {
         pedido.setMesa(mesa);
         pedido.setClienteNombre(clienteNombre);
         pedido.setComentarios(comentarios);
-
-        // Estado inicial correcto según HU-03
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE);
         pedido.setPedidoEstaTerminado(false);
 
@@ -122,6 +120,16 @@ public class PedidoService {
         pedido.setMesa(mesa);
         pedido.setClienteNombre(clienteNombre);
         pedido.setComentarios(comentarios);
+
+        pedidoRepository.save(pedido);
+    }
+
+    public void actualizarEstadoPedido(int id, EstadoPedido nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+
+        pedido.setEstadoPedido(nuevoEstado);
+        pedido.setPedidoEstaTerminado(nuevoEstado == EstadoPedido.TERMINADO);
 
         pedidoRepository.save(pedido);
     }
