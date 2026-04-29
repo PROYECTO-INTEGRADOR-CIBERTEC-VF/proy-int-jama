@@ -1,53 +1,89 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Listado de Menús - FastFood Jama</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8">
+        <title>Listado de Menús - FastFood Jama</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        .menu-btn {
-            transition: all 0.25s ease;
-            border-radius: 10px;
-        }
+        <style>
+            .menu-btn {
+                transition: all 0.25s ease;
+                border-radius: 10px;
+            }
 
-        .menu-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-    </style>
-</head>
+            .menu-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+        </style>
+    </head>
 
-<body class="bg-dark text-light">
+    <body class="bg-dark text-light">
 
-<nav class="navbar navbar-dark bg-black px-4">
-    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
+        <nav class="navbar navbar-dark bg-black px-4">
+            <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
 
-    <div>
-        <a th:href="@{/menu}" class="btn btn-outline-light btn-sm">← Gestión del menú</a>
-        <a th:href="@{/menu/main-menu}" class="btn btn-outline-warning btn-sm">Menú principal</a>
-    </div>
-</nav>
+            <div>
+                <a th:href="@{/menu}" class="btn btn-outline-light btn-sm">← Gestión del menú</a>
+                <a th:href="@{/menu/main-menu}" class="btn btn-outline-warning btn-sm">Menú principal</a>
+            </div>
+        </nav>
 
-<div class="container py-4">
+        <div class="container py-4">
 
-    <div class="card bg-secondary-subtle text-dark shadow">
+            <div class="card bg-secondary-subtle text-dark shadow">
 
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0 fw-bold">Listado de Menús</h4>
-        </div>
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 fw-bold">Listado de Menús</h4>
+                </div>
 
-        <div class="card-body text-center">
+                <div class="card-body text-center">
 
-            <p class="text-muted">
-                Aquí se mostrará el listado de menús registrados.
-            </p>
+                    <p class="text-muted">
+                    <div class="col-lg-7">
 
-        </div>
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Bloqueado</th>
+                                    <th>Precio Total</th>
+                                    <th>Descuento</th>
+                                    <th># SKUs</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="menu : ${menusTableList}">
+                                    <td th:text="${menu.id}">1</td>
+                                    <td th:text="${menu.nombre}"></td>
+                                    <td>
+                                        <span th:text="${menu.estaBloqueado}" class="badge bg-success"></span>
+                                    </td>
+                                    <td th:text="${menu.precioTotal}"></td>
+                                    <td th:text="${menu.descuento}"></td>
+                                    <td>
+                                        <p th:each="m : ${menu.menuSkus}"
+                                           th:text="${m.nombre}"></p>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/menu/menu-registro-menu/edit/{id}(id= ${menu.id})}"
+                                           class="btn btn-sm btn-warning menu-btn">Edit
+                                        </a>
+                                        <a th:href="@{/menu/menu-registro-menu/delete/{id}(id= ${menu.id})}"
+                                           class="btn btn-sm btn-danger menu-btn">Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-    </div>
+                    </div>
 
-</div>
+                </div>
 
-</body>
+            </div>
+
+    </body>
 </html>

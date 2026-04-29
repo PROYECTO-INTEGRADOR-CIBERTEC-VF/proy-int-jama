@@ -245,7 +245,7 @@
         row.innerHTML = `
         <td class="ps-4 fw-semibold text-primary the-row-id-for-skus-table">#${id}</td>
         <td>${name}</td>
-        <td>${price}</td>
+        <td class="the-row-price-for-skus-table">${price}</td>
         <td class="text-end pe-4">
             <button  class="btn btn-sm btn-outline-danger" onclick="removeRow(${price},this, ${index})">
                 Remove
@@ -282,7 +282,7 @@
         if (input) input.remove();
         count--;
         counter.textContent = count.toString();
-        currentPrice = Number(currentPrice) - Number(price);
+        currentPrice = (Number(currentPrice) - Number(price)) ;
         totalPriceInput.value = addDiscount(currentPrice)
 
     }
