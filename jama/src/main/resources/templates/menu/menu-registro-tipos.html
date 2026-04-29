@@ -107,12 +107,12 @@
                     <td th:text="${item.descripcion}"></td>
 
                     <td>
-                        <a th:href="@{/menu/menu-registro-categorias/{id}(id=${item.id})}"
+                        <a th:href="@{/menu/menu-registro-tipos/{id}(id=${item.id})}"
                            class="btn btn-warning btn-sm menu-btn">
                             ✏️
                         </a>
 
-                        <form th:action="@{/menu/menu-registro-categorias/delete/{id}(id=${item.id})}"
+                        <form th:action="@{/menu/menu-registro-tipos/delete/{id}(id=${item.id})}"
                               style="display:inline;"
                               method="post">
                             <button type="submit"

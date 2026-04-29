@@ -27,7 +27,11 @@ public class MainMenuController {
 
 
     @GetMapping("/menu/menu-listado")
-    public String menuListado() {
+    public String menuListado(Model model) {
+
+
+        model.addAttribute("menuSkus", menuService.getAllSkus());
+        model.addAttribute("menusTableList", menuService.getAllMenus());
         return "menu/menu-listado";
     }
 

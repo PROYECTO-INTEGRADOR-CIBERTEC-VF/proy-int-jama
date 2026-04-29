@@ -11,6 +11,9 @@ import com.cibertec.jama.repositories.usuario.UserRepository;
 import com.cibertec.jama.repositories.usuario.UserRolRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,10 +22,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-
-
+public class UserService   {
     private final UserRepository userRepository;
+
     private final UserRolRepository userRolRepository;
     private final UserPositionRepository userPositionRepository;
     private final UserDataRepository userDataRepository;
@@ -126,7 +128,7 @@ public class UserService {
     }
 
     public UsuarioDataDto getUserDataById(int id) {
-        if(id == 0) {
+        if (id == 0) {
             return null;
         }
         Optional<Users> optionalUser = userRepository.findById(id);
@@ -149,7 +151,7 @@ public class UserService {
         var optionalData = userDataRepository.findById(dto.users().getId());
         var data = optionalData.orElse(null);
 
-        if(user == null) {
+        if (user == null) {
             return;
         }
 
@@ -181,7 +183,7 @@ public class UserService {
 
         var userOption = userPositionRepository.findById(id);
 
-        if(userOption.isEmpty()) {
+        if (userOption.isEmpty()) {
             return;
         }
 
