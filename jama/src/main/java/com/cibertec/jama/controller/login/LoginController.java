@@ -4,10 +4,7 @@ import com.cibertec.jama.service.menu.MenuService;
 import com.cibertec.jama.service.usuario.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +42,7 @@ public class LoginController {
     ) {
         boolean bool = userService.validateLoginAuth(loginid, password, session);
         if (bool) {
-            flagIsLoginOn = false;
+            flagIsLoginOn = true;
             return "redirect:/menu/main-menu";
         }
         return "redirect:/login";

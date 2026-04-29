@@ -11,9 +11,6 @@ import com.cibertec.jama.repositories.usuario.UserRepository;
 import com.cibertec.jama.repositories.usuario.UserRolRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
