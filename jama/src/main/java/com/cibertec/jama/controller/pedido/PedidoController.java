@@ -1,5 +1,6 @@
 package com.cibertec.jama.controller.pedido;
 
+import com.cibertec.jama.entities.pedido.EstadoPedido;
 import com.cibertec.jama.service.menu.MenuService;
 import com.cibertec.jama.service.pedido.PedidoService;
 import org.springframework.stereotype.Controller;
@@ -54,7 +55,7 @@ public class PedidoController {
     public String actualizarPedido(@PathVariable int id,
                                    @RequestParam String mesa,
                                    @RequestParam String clienteNombre,
-                                   @RequestParam String comentarios) {
+                                   @RequestParam(required = false) String comentarios) {
 
         pedidoService.actualizarPedido(id, mesa, clienteNombre, comentarios);
         return "redirect:/pedido?success";
@@ -70,5 +71,13 @@ public class PedidoController {
     public String seguimientoPedido(Model model) {
         model.addAttribute("pedidosPendientes", pedidoService.listarPedidosPendientes());
         return "pedido/seguimiento-pedido";
+    }
+
+    @PostMapping("/pedido/actualizar-estado/{id}")
+    public String actualizarEstadoPedido(@PathVariable int id,
+                                         @RequestParam EstadoPedido estadoPedido) {
+
+        pedidoService.actualizarEstadoPedido(id, estadoPedido);
+        return "redirect:/pedido/seguimiento-pedido";
     }
 }

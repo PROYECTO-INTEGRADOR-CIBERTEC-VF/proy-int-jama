@@ -1,285 +1,260 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Menu SKU Dashboard</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {
-                background-color: #f5f7fa;
-            }
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu SKU - FastFood Jama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-            .sidebar-form {
-                background: #ffffff;
-                border-radius: 16px;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-                padding: 24px;
-            }
+    <style>
+        .menu-btn {
+            transition: all 0.25s ease;
+            border-radius: 10px;
+        }
 
-            .list-panel {
-                background: #ffffff;
-                border-radius: 16px;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-                padding: 24px;
-            }
+        .menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
 
-            .image-preview {
-                width: 100%;
-                max-width: 220px;
-                height: 160px;
-                object-fit: cover;
-                border-radius: 12px;
-                border: 1px solid #ddd;
-                display: block;
-                margin-top: 10px;
-            }
+        .panel {
+            border-radius: 16px;
+        }
 
-            .table td, .table th {
-                vertical-align: middle;
-            }
+        .dashboard-title {
+            font-weight: 700;
+        }
 
-            .dashboard-title {
-                font-weight: 700;
-            }
+        .image-preview {
+            width: 100%;
+            max-width: 220px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            display: block;
+            margin-top: 10px;
+        }
 
-            .badge-status {
-                font-size: 0.85rem;
-            }
-        </style>
-    </head>
-    <body>
+        .table td, .table th {
+            vertical-align: middle;
+        }
 
-        <div class="container-fluid py-4">
-            <div class="row g-4">
+        .badge-status {
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
 
-                <!-- LEFT: FORM -->
-                <div class="col-lg-4">
-                    <div class="sidebar-form">
-                        <h3 class="dashboard-title mb-4">Menu SKU Form</h3>
+<body class="bg-dark text-light">
 
-                        <form th:object="${menuSkuAndImageDto}" th:action="@{/menu/menu-registro-sku}" method="post">
-                            <input type="hidden" name="id" th:field="*{menuSku.id}">
+<nav class="navbar navbar-dark bg-black px-4">
+    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
 
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input
-                                        type="text"
-                                        id="nombre"
-                                        name="nombre"
-                                        class="form-control"
-                                        placeholder="Nombre del producto"
-                                        th:field="*{menuSku.nombre}"
-                                        required>
-                            </div>
+    <div>
+        <a th:href="@{/menu}" class="btn btn-outline-light btn-sm">← Gestión del menú</a>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-warning btn-sm">Menú principal</a>
+    </div>
+</nav>
 
-                            <div class="mb-3">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <textarea
-                                        id="descripcion"
-                                        name="descripcion"
-                                        class="form-control"
-                                        rows="3"
-                                        placeholder="Descripción del producto"
-                                        th:field="*{menuSku.descripcion}"
-                                        required></textarea>
-                            </div>
+<div class="container-fluid py-4">
+    <div class="row g-4">
 
-                            <div class="mb-3 form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado"
-                                       th:field="*{menuSku.estaBloqueado}">
-                                <label class="form-check-label" for="estaBloqueado">Está bloqueado</label>
-                            </div>
-
-
-                            <div class="mb-3">
-                                <label for="precio" class="form-label">Precio</label>
-                                <input type="number" id="precio" name="precio" class="form-control" step="0.01"
-                                       placeholder="0.00" th:field="*{menuSku.precio}">
-                            </div>
-
-                            <!--                    <div class="mb-3">-->
-                            <!--                        <label for="tipoId" class="form-label">Tipo ID</label>-->
-                            <!--                        <input type="text" id="tipoId" name="tipoId" class="form-control" placeholder="Tipo ID">-->
-                            <!--                    </div>-->
-                            <div class="mb-3">
-                                <label for="tipoId" class="form-label">Tipo de item</label>
-                                <select id="tipoId" name="menuCategory" class="form-select"
-                                        th:field="*{menuSku.menuCategory}">
-
-
-                                    <option
-                                            th:each=" c : ${menuCategories}"
-                                            th:value="${c.id}"
-                                            th:text="${c.name}"
-                                    ></option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="menuCategory" class="form-label">Menu Category</label>
-                                <select id="menuCategory" name="menuCategory" class="form-select"
-                                        th:field="*{menuSku.menuType}">
-
-
-                                    <option
-                                            th:each="t : ${menuTipos}"
-                                            th:value="${t.id}"
-                                            th:text="${t.nombre}"
-                                    >
-
-                                    </option>
-                                </select>
-                            </div>
-
-                            <!--image-->
-                            <div class="mb-3">
-                                <label for="menuImage" class="form-label">Menu Image</label>
-                                <input id="menuImage"
-                                       name="menuImage"
-                                       class="form-select"
-                                       th:field="*{menuImage.url}"
-                                       onchange="updateImagePreview()"
-
-                                >
-                                <img id="imagePreview"
-                                     class="image-preview"
-                                     src="https://i.imgur.com/oxyNiEi.jpeg"
-                                     alt="Image preview">
-                                <div class="mb-3" hidden id="image-alias-div">
-                                    <label for="alias" class="form-label">Alias</label>
-                                    <input
-                                            type="text"
-                                            id="alias"
-                                            name="alias"
-                                            class="form-control"
-                                            placeholder="Un alia para la image"
-                                            th:field="*{menuImage.alias}"
-                                    >
-                                </div>
-
-                            </div>
-
-
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary w-100">Save</button>
-                                <button type="reset" class="btn btn-outline-secondary w-100">Clear</button>
-                            </div>
-                        </form>
-                        <div>
-                            <!-- Back button -->
-                            <div class="text-left mt-3">
-                                <a type="button" class="btn btn-secondary"
-                                        th:href="@{/menu}">
-                                    Volver
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-lg-4">
+            <div class="card bg-secondary-subtle text-dark shadow panel">
+                <div class="card-header bg-warning text-center">
+                    <h3 class="mb-0 fw-bold">Registro de SKU</h3>
                 </div>
 
-                <!-- RIGHT: LIST -->
-                <div class="col-lg-8">
-                    <div class="list-panel">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="dashboard-title mb-0">Menu SKU List</h3>
-                            <input type="text" class="form-control w-auto" placeholder="Search...">
+                <div class="card-body">
+                    <form th:object="${menuSkuAndImageDto}" th:action="@{/menu/menu-registro-sku}" method="post">
+                        <input type="hidden" name="id" th:field="*{menuSku.id}">
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    class="form-control"
+                                    placeholder="Nombre del producto"
+                                    th:field="*{menuSku.nombre}"
+                                    required>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Descripción</th>
-                                        <th>Bloqueado</th>
-                                        <th>Tipo ID</th>
-                                        <th>Precio</th>
-                                        <th>Category</th>
-                                        <th>Image</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each=" i : ${menuSkuAndImageJoinDto} ">
-                                        <td th:text="${i.nombre}"></td>
-                                        <td th:text="${i.descripcion}"></td>
-                                        <td>
-                                            <span th:text="${i.estaBloqueado }"
-                                                  class="badge bg-success badge-status"></span>
-                                        </td>
-                                        <td th:text="${i.typeName}"></td>
-                                        <td th:text="${i.precio}"></td>
-                                        <td th:text="${i.categoryName}"></td>
-                                        <td>
-                                            <a th:href="${ i.imageUrl}" th:text="${ i.imageAlias}" target="_blank"></a>
-                                        </td>
-                                        <td>
-                                            <a th:href="@{/menu/menu-registro-sku/{id}(id = ${i.id})}"
-                                               class="btn btn-sm btn-warning">Edit
-                                            </a>
-                                            <a th:href="@{/menu/menu-registro-sku/delete/{id}(id = ${i.id})}"
-                                               class="btn btn-sm btn-danger"
-                                               onclick="return confirm('¿Eliminar?')"
-                                            >Delete
-                                            </a>
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea
+                                    id="descripcion"
+                                    name="descripcion"
+                                    class="form-control"
+                                    rows="3"
+                                    placeholder="Descripción del producto"
+                                    th:field="*{menuSku.descripcion}"
+                                    required></textarea>
                         </div>
 
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="estaBloqueado" name="estaBloqueado"
+                                   th:field="*{menuSku.estaBloqueado}">
+                            <label class="form-check-label" for="estaBloqueado">Está bloqueado</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="precio" class="form-label">Precio</label>
+                            <input type="number" id="precio" name="precio" class="form-control" step="0.01"
+                                   placeholder="0.00" th:field="*{menuSku.precio}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tipoId" class="form-label">Tipo de item</label>
+                            <select id="tipoId" name="menuCategory" class="form-select"
+                                    th:field="*{menuSku.menuCategory}">
+                                <option
+                                        th:each=" c : ${menuCategories}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="menuCategory" class="form-label">Menu Category</label>
+                            <select id="menuCategory" name="menuCategory" class="form-select"
+                                    th:field="*{menuSku.menuType}">
+                                <option
+                                        th:each="t : ${menuTipos}"
+                                        th:value="${t.id}"
+                                        th:text="${t.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="menuImage" class="form-label">Menu Image</label>
+                            <input id="menuImage"
+                                   name="menuImage"
+                                   class="form-control"
+                                   th:field="*{menuImage.url}"
+                                   onchange="updateImagePreview()">
+
+                            <img id="imagePreview"
+                                 class="image-preview"
+                                 src="https://i.imgur.com/oxyNiEi.jpeg"
+                                 alt="Image preview">
+
+                            <div class="mb-3" hidden id="image-alias-div">
+                                <label for="alias" class="form-label mt-3">Alias</label>
+                                <input
+                                        type="text"
+                                        id="alias"
+                                        name="alias"
+                                        class="form-control"
+                                        placeholder="Un alia para la image"
+                                        th:field="*{menuImage.alias}">
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success w-100 fw-bold menu-btn">Save</button>
+                            <button type="reset" class="btn btn-outline-secondary w-100 fw-bold">Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="text-left mt-3">
+                        <a type="button" class="btn btn-secondary"
+                           th:href="@{/menu}">
+                            Volver
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function (){
-                updateImagePreview()
-            })
-            function updateImagePreview() {
-                const input = document.getElementById('menuImage');
-                const imageUrl = input.value;
 
-                const preview = document.getElementById('imagePreview');
+        <div class="col-lg-8">
+            <div class="card bg-secondary-subtle text-dark shadow panel">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="dashboard-title mb-0">Menu SKU List</h3>
+                        <input type="text" class="form-control w-auto" placeholder="Search...">
+                    </div>
+                </div>
 
-                const hiddenInpunt = document.getElementById('image-alias-div')
-                const aliasInput = document.getElementById('alias')
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Bloqueado</th>
+                                <th>Tipo ID</th>
+                                <th>Precio</th>
+                                <th>Category</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each=" i : ${menuSkuAndImageJoinDto} ">
+                                <td th:text="${i.nombre}"></td>
+                                <td th:text="${i.descripcion}"></td>
+                                <td>
+                                    <span th:text="${i.estaBloqueado }"
+                                          class="badge bg-success badge-status"></span>
+                                </td>
+                                <td th:text="${i.typeName}"></td>
+                                <td th:text="${i.precio}"></td>
+                                <td th:text="${i.categoryName}"></td>
+                                <td>
+                                    <a th:href="${ i.imageUrl}" th:text="${ i.imageAlias}" target="_blank"></a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/menu/menu-registro-sku/{id}(id = ${i.id})}"
+                                       class="btn btn-sm btn-warning menu-btn">Edit
+                                    </a>
+                                    <a th:href="@{/menu/menu-registro-sku/delete/{id}(id = ${i.id})}"
+                                       class="btn btn-sm btn-danger menu-btn"
+                                       onclick="return confirm('¿Eliminar?')">Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                if (imageUrl) {
-                    hiddenInpunt.hidden = false;
-                    preview.src = imageUrl
-                    preview.style.display = 'block';
-                } else {
-                    hiddenInpunt.hidden = true;
+<script>
+    document.addEventListener("DOMContentLoaded", function (){
+        updateImagePreview()
+    })
 
-                    preview.src = '';
-                    preview.style.display = 'none';
-                }
-            }
-        </script>
-        <!--        <script>-->
-        <!--            function updateImagePreview() {-->
-        <!--                const select = document.getElementById('menuImage');-->
-        <!--                const selectedOption = select.options[select.selectedIndex];-->
-        <!--                const imageUrl = selectedOption.getAttribute('data-url');-->
-        <!--                const imageName = selectedOption.getAttribute('data-name');-->
-        <!--                const imageValue = selectedOption.value;-->
+    function updateImagePreview() {
+        const input = document.getElementById('menuImage');
+        const imageUrl = input.value;
 
-        <!--                const preview = document.getElementById('imagePreview');-->
-        <!--                const info = document.getElementById('imageInfo');-->
+        const preview = document.getElementById('imagePreview');
 
-        <!--                if (imageUrl) {-->
-        <!--                    preview.src = imageUrl;-->
-        <!--                    info.textContent = `Selected image: ${imageValue} - ${imageName}`;-->
-        <!--                } else {-->
-        <!--                    preview.src = '';-->
-        <!--                    info.textContent = 'No image selected';-->
-        <!--                }-->
-        <!--            }-->
-        <!--        </script>-->
+        const hiddenInpunt = document.getElementById('image-alias-div')
+        const aliasInput = document.getElementById('alias')
 
-    </body>
+        if (imageUrl) {
+            hiddenInpunt.hidden = false;
+            preview.src = imageUrl
+            preview.style.display = 'block';
+        } else {
+            hiddenInpunt.hidden = true;
+
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
 </html>

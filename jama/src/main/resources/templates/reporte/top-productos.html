@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Productos - FastFood Jama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .menu-btn {
+            transition: all 0.25s ease;
+            border-radius: 10px;
+        }
+        .menu-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-light">
+
+<nav class="navbar navbar-dark bg-black px-4">
+    <span class="navbar-brand fw-bold">🍔 FastFood Jama</span>
+
+    <div>
+        <a th:href="@{/menu/main-menu}" class="btn btn-outline-light btn-sm">← Menú principal</a>
+        <a th:href="@{/reporte}" class="btn btn-outline-primary btn-sm">Reportes</a>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card bg-secondary-subtle text-dark shadow">
+
+                <div class="card-header bg-warning text-center">
+                    <h4 class="mb-0 fw-bold">Top menús más vendidos</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle text-center">
+
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Menú</th>
+                                <th>Cantidad vendida</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(topMenus)}">
+                                <td colspan="2" class="text-muted">Sin datos</td>
+                            </tr>
+
+                            <tr th:each="m : ${topMenus}">
+                                <td th:text="${m[0]}"></td>
+                                <td th:text="${m[1]}"></td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card bg-secondary-subtle text-dark shadow">
+
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0 fw-bold">Top extras más vendidos</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle text-center">
+
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Extra</th>
+                                <th>Cantidad vendida</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(topExtras)}">
+                                <td colspan="2" class="text-muted">Sin datos</td>
+                            </tr>
+
+                            <tr th:each="e : ${topExtras}">
+                                <td th:text="${e[0]}"></td>
+                                <td th:text="${e[1]}"></td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
